@@ -1,11 +1,10 @@
 package util
 
-import org.scalatest._
+import org.scalatest.BeforeAndAfter
+import org.scalatest.Finders
+import org.scalatest.FlatSpec
 
-import play.test.FakeApplication;
-import play.test.Helpers;
-import play.api.Play
-import models._
+import play.test.Helpers
 
 class StationsManagerTest extends FlatSpec with BeforeAndAfter {
 
