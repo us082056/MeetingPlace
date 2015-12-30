@@ -1,7 +1,15 @@
-@(message: String)
+@(inputForm: Form[StationForm])(implicit messages: Messages)
+
+@import helper._
 
 @main("Welcome to Play") {
-
-    @play20.welcome(message)
-
+  <h1>Entry user</h1>
+  @helper.form(action = routes.SearchController.search) {
+    <fieldset>
+        <legend>input user info.</legend>
+         @helper.inputText(inputForm("name"))
+    </fieldset>
+    <input type="submit" value="entry">
+  }
 }
+
