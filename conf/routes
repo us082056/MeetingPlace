@@ -3,9 +3,10 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.SearchController.init
+GET		/ 				controllers.SearchController.init
 
-POST    /					        controllers.SearchController.search
+
+POST		/search			controllers.SearchController.search
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET		/assets/*file	controllers.Assets.versioned(path="/public", file: Asset)

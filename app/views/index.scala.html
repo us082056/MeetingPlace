@@ -1,15 +1,14 @@
-@(inputForm: Form[StationForm])(implicit messages: Messages)
-
-@import helper._
-
-@main("Welcome to Play") {
-  <h1>Entry user</h1>
-  @helper.form(action = routes.SearchController.search) {
-    <fieldset>
-        <legend>input user info.</legend>
-         @helper.inputText(inputForm("name"))
-    </fieldset>
-    <input type="submit" value="entry">
-  }
-}
-
+<!DOCTYPE html>
+<html lang=”ja”>
+<head>
+	<meta charset=”UTF-8″>
+	<title>集合駅検索</title>
+</head>
+<body>
+	<form action="/search" method="post">
+		<input type="text" name="station1"> 
+		<input type="text" name="station2">
+		<input type="submit" value="検索">
+	</form>
+</body>
+</html>
