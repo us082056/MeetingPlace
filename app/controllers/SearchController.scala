@@ -1,7 +1,7 @@
 package controllers
 
 import models.Station
-import models.StationForm
+import models.InputForm
 import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc.Action
@@ -11,13 +11,13 @@ import util.StationsManager
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._ //・・・TODO おまじない
 import models.Station
+import play.Logger
 
 class SearchController extends Controller {
-  val stationForm = Form(
-    mapping("name" -> text)(StationForm.apply)(StationForm.unapply))
+  val inputForm = Form(
+    mapping("station-name" -> list(text))(InputForm.apply)(InputForm.unapply))
 
   def init = Action {
-    val inputForm = stationForm.fill(StationForm("user name"))
     Ok(views.html.index())
   }
 
@@ -26,14 +26,19 @@ class SearchController extends Controller {
     //TODO バリデーション
 
     //駅名取得（入力値取得）・・・（仮） 
-    val s1 = Form("station1" -> text).bindFromRequest().get
-    val s2 = Form("station2" -> text).bindFromRequest().get
-    var inputStations: List[Station] = List(new Station(s1, "", null), new Station(s2, "", null))
+    //    val s1 = Form("station1" -> text).bindFromRequest().get
+    //    val s2 = Form("station2" -> text).bindFromRequest().get
+
+    //    for (name <- inputForm.bindFromRequest().get.names) {
+    //      Logger.debug(name)
+    //      inputStations.+:(new Station(name, "", null))
+    //    }
     //TODO 画面から入力値を取得し、リストに詰める
+    var inputStations = inputForm.bindFromRequest().get.names.map(x => new Station(x, "", null))
 
     //経緯度取得
-    for (station <- inputStations) {
-      //駅名を駅コードに変換する
+    for (station <- inputStations) { //駅名を駅コードに変換する
+      Logger.debug(station.name)
       station.code = StationsManager.nameToCode(station.name)
 
       //webAPIで駅コードの経緯度取得する
