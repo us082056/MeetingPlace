@@ -8,10 +8,10 @@ class LonLatCalculator {
 
     // 両変数ともに初期値を設定
     var lonSum, latSum = 0.0
-
-    for (station <- stations) {
-      lonSum += station.lonLat.lon
-      latSum += station.lonLat.lat
+    
+    stations.foreach { x => 
+      lonSum += x.lonLat.lon
+      latSum += x.lonLat.lat
     }
 
     new LonLat(lonSum / stations.length, latSum / stations.length)

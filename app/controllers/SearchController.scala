@@ -24,20 +24,12 @@ class SearchController extends Controller {
   //requestをimplicitで宣言することで、暗黙的にリクエストを引数として受け取る
   def search = Action { implicit request =>
     //TODO バリデーション
-
-    //駅名取得（入力値取得）・・・（仮） 
-    //    val s1 = Form("station1" -> text).bindFromRequest().get
-    //    val s2 = Form("station2" -> text).bindFromRequest().get
-
-    //    for (name <- inputForm.bindFromRequest().get.names) {
-    //      Logger.debug(name)
-    //      inputStations.+:(new Station(name, "", null))
-    //    }
-    //TODO 画面から入力値を取得し、リストに詰める
-    var inputStations = inputForm.bindFromRequest().get.names.map(x => new Station(x, "", null))
+    var inputStations = inputForm.bindFromRequest.get.names.map(x => new Station(x, "", null))
 
     //経緯度取得
-    for (station <- inputStations) { //駅名を駅コードに変換する
+    // TODO webじゃなくてCSVのデータだけで完結できる
+    // TODO 複数ヒットした時の仕組み必要
+    for (station <- inputStations) {
       Logger.debug(station.name)
       station.code = StationsManager.nameToCode(station.name)
 
