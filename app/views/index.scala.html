@@ -1,3 +1,5 @@
+@(inputForm:Form[InputForm]=null, message:String=null)
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -18,21 +20,31 @@
 </head>
 <body>
 	<div class="well">
+		<p class="text-danger" id="error-msg">@message</p>
 		<button type="button" class="btn btn-default" id="add-button">出発駅追加</button>
 		<button type="button" class="btn btn-default" id="del-button" disabled="true">出発駅削除</button>
 		<form action="/search" method="get">
 			<div id="input-group">
-				<div class="form-group" id="station0">
-					<label for="station-name[0]">出発駅1</label>
-					<input type="text" class="form-control" id="station-name[0]" name="station-name[0]" placeholder="駅名">
-				</div>
-				<div class="form-group" id="station1">
-					<label for="station-name[1]">出発駅2</label>
-					<input type="text" class="form-control" id="station-name[1]" name="station-name[1]" placeholder="駅名">
-				</div>
+				@if(inputForm("station-name").indexes.size < 3){
+				    	<div class="form-group" id="station0">
+							<label for="station-name[0]">出発駅1</label>
+							<input type="text" class="form-control" id="station-name[0]" name="station-name[0]" placeholder="駅名" value=@inputForm("station-name[0]").value>
+						</div>
+				    	<div class="form-group" id="station1">
+							<label for="station-name[1]">出発駅2</label>
+							<input type="text" class="form-control" id="station-name[1]" name="station-name[1]" placeholder="駅名" value=@inputForm("station-name[1]").value>
+						</div>
+				}else{
+					@for(idx <- inputForm("station-name").indexes){
+				    	<div class="form-group" id="station@idx">
+							<label for="station-name[@idx]">出発駅@{idx+1}</label>
+							<input type="text" class="form-control" id="station-name[@idx]" name="station-name[@idx]" placeholder="駅名" value=@(inputForm("station-name[" + idx + "]").value)>
+						</div>
+					}
+				}
 			</div>
-			<input type="submit" value="検索" class="btn btn-primary">
-		</form>
-	</div>
+	<input type="submit" value="検索" class="btn btn-primary">
+</form>
+</div>
 </body>
 </html>

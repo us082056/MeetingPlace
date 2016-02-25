@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET		/index			controllers.SearchController.init
+GET		/index			controllers.SearchController.index
 
 
 GET		/search			controllers.SearchController.search

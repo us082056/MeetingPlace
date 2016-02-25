@@ -9,7 +9,7 @@ import play.api.mvc.Controller
 import servicies.LonLatCalculator
 import util.StationsManager
 import play.api.Play.current
-import play.api.i18n.Messages.Implicits._ //・・・TODO おまじない
+import play.api.i18n.Messages.Implicits._
 import models.Station
 import play.Logger
 
@@ -17,34 +17,50 @@ class SearchController extends Controller {
   val inputForm = Form(
     mapping("station-name" -> list(text))(InputForm.apply)(InputForm.unapply))
 
-  def init = Action {
-    Ok(views.html.index())
+  def index = Action {
+    val emptyForm = inputForm.fill(InputForm(Nil))
+    Ok(views.html.index(emptyForm))
   }
 
   //requestをimplicitで宣言することで、暗黙的にリクエストを引数として受け取る
   def search = Action { implicit request =>
-    //TODO バリデーション
-    var inputStations = inputForm.bindFromRequest.get.names.map(x => new Station(x, "", null))
+    inputForm.bindFromRequest.fold(
 
-    //経緯度取得
-    // TODO webじゃなくてCSVのデータだけで完結できる
-    // TODO 複数ヒットした時の仕組み必要
-    for (station <- inputStations) {
-      Logger.debug(station.name)
-      station.code = StationsManager.nameToCode(station.name)
+      // バリデーションNG
+      validationErrorForm => {
+        Logger.debug("validation error")
+        BadRequest(views.html.index(validationErrorForm))
+      },
 
-      //webAPIで駅コードの経緯度取得する
-      station.lonLat = StationsManager.codeToLonLat(station.code)
-    }
+      // バリデーションOK
+      form => {
+        var inputStations = form.names.filter(x => x != "").map(x => new Station(x, "", null))
 
-    //中心経緯度計算
-    val centerLonLat = new LonLatCalculator().calcCenterLonLat(inputStations)
+        // 相関チェック
+        if (inputStations.size < 2) {
+          BadRequest(views.html.index(inputForm.bindFromRequest(), "最低でも2つ"))
+        } else {
+          //経緯度取得
+          // TODO webじゃなくてCSVのデータだけで完結できる
+          // TODO 複数ヒットした時の仕組み必要
+          inputStations.foreach { x =>
+            Logger.debug(x.name)
+            x.code = StationsManager.nameToCode(x.name)
 
-    //最寄駅取得
-    val nearStationsName = StationsManager.getNearStationsName(centerLonLat)
+            //webAPIで駅コードの経緯度取得する
+            x.lonLat = StationsManager.codeToLonLat(x.code)
+          }
 
-    //出力
-    //TODO 画面出力する(仮）
-    Ok(views.html.result(nearStationsName(0)))
+          //中心経緯度計算
+          val centerLonLat = new LonLatCalculator().calcCenterLonLat(inputStations)
+
+          //最寄駅取得
+          val nearStationsName = StationsManager.getNearStationsName(centerLonLat)
+
+          //出力
+          //TODO 画面出力する(仮）
+          Ok(views.html.result(nearStationsName(0)))
+        }
+      })
   }
 }
