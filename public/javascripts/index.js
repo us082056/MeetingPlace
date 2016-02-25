@@ -1,5 +1,5 @@
 $(function(){
-       // 入力フォームの最小添え字番号（添え字はo始まりのため入力フォーム数換算だと2つ）
+       // html表示時の入力フォーム総数
        var defaultFormIdx = $('#input-group').children("div").length - 1
 
        // 追加された入力フォームの総数（デフォルトo個）
@@ -34,7 +34,9 @@ $(function(){
 
               // 削除ボタンの活性・非活性を切り替える
               function updateDelButtonState(){
-                     if (addedFormCount === 0) {
+
+                     // フォームの総数が2（添え字換算で1）なら削除ボタンを押せないように制御
+                     if ((defaultFormIdx + addedFormCount) === 1) {
                             $(function(){
                                    $('#del-button').prop("disabled", true);
                             });                        
