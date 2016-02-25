@@ -1,4 +1,4 @@
-@(inputForm:Form[InputForm]=null, message:String=null)
+@(inputForm:Form[InputForm], messageList:List[String])
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -20,7 +20,11 @@
 </head>
 <body>
 	<div class="well">
-		<p class="text-danger" id="error-msg">@message</p>
+		@if(messageList.size != 0){
+			@for(message <- messageList){
+				<div class="alert alert-danger">@message</div>
+			}
+		}
 		<button type="button" class="btn btn-default" id="add-button">出発駅追加</button>
 		<button type="button" class="btn btn-default" id="del-button" disabled="true">出発駅削除</button>
 		<form action="/search" method="get">

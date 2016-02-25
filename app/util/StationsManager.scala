@@ -7,6 +7,7 @@ import com.github.tototoshi.csv.defaultCSVFormat
 import models.LonLat
 import models.Station
 import scala.xml.Null
+import models.Station
 
 /*
  * 駅情報関係の情報やり取りを管理するクラス
@@ -28,6 +29,8 @@ object StationsManager {
   }
 
   def nameToCode(name: String) = stationsMap(name)
+
+  def exists(station: Station) = stationsMap.isDefinedAt(station.name)
 
   def codeToLonLat(code: String) = {
     val urlStr = "http://www.ekidata.jp/api/s/" + code + ".xml"

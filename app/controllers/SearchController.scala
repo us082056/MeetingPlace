@@ -12,6 +12,8 @@ import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import models.Station
 import play.Logger
+import scala.collection.immutable.Nil
+import play.api.mvc.Result
 
 class SearchController extends Controller {
   val inputForm = Form(
@@ -19,30 +21,41 @@ class SearchController extends Controller {
 
   def index = Action {
     val emptyForm = inputForm.fill(InputForm(Nil))
-    Ok(views.html.index(emptyForm))
+    Ok(views.html.index(emptyForm, Nil))
   }
 
   //requestをimplicitで宣言することで、暗黙的にリクエストを引数として受け取る
   def search = Action { implicit request =>
-    inputForm.bindFromRequest.fold(
+    def handle: Result = {
+      inputForm.bindFromRequest.fold(
 
-      // バリデーションNG
-      validationErrorForm => {
-        Logger.debug("validation error")
-        BadRequest(views.html.index(validationErrorForm))
-      },
+        // バリデーションNG
+        validationErrorForm => {
+          Logger.debug("validation error")
+          return BadRequest(views.html.index(validationErrorForm, Nil))
+        },
 
-      // バリデーションOK
-      form => {
-        var inputStations = form.names.filter(x => x != "").map(x => new Station(x, "", null))
+        // バリデーションOK
+        form => {
+          var inputStations = form.names.filter(x => x != "").map(x => new Station(x, "", null))
 
-        // 相関チェック
-        if (inputStations.size < 2) {
-          BadRequest(views.html.index(inputForm.bindFromRequest(), "最低でも2つ"))
-        } else {
+          // 相関チェック（入力項目数チェック）
+          if (inputStations.size < 2) {
+            Logger.debug("項目数エラー")
+            return BadRequest(views.html.index(inputForm.bindFromRequest(), List("2つ以上の出発駅を入力してください")))
+          }
+
+          // 相関チェック（キーワード存在チェック）
+          var errorMsgList = inputStations.filter { x => !StationsManager.exists(x) }.map { x => x.name + "が見つかりません、駅名が正しいか確認してください" }
+          if (errorMsgList.size != 0) {
+            Logger.debug("存在チェックエラー")
+            return BadRequest(views.html.index(inputForm.bindFromRequest(), errorMsgList))
+          }
+
           //経緯度取得
           // TODO webじゃなくてCSVのデータだけで完結できる
           // TODO 複数ヒットした時の仕組み必要
+          // TODO Manager内に隠蔽したい（Stationクラス単位の処理はManager内に閉じたい）
           inputStations.foreach { x =>
             Logger.debug(x.name)
             x.code = StationsManager.nameToCode(x.name)
@@ -57,10 +70,10 @@ class SearchController extends Controller {
           //最寄駅取得
           val nearStationsName = StationsManager.getNearStationsName(centerLonLat)
 
-          //出力
-          //TODO 画面出力する(仮）
-          Ok(views.html.result(nearStationsName(0)))
-        }
-      })
+          //出力 TODO(仮）
+          return Ok(views.html.result(nearStationsName(0)))
+        })
+    }
+    handle
   }
 }
