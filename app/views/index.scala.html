@@ -20,10 +20,13 @@
 </head>
 <body>
 	<div class="well">
+		<h3>集合駅検索</h3>
 		@if(messageList.size != 0){
-			@for(message <- messageList){
-				<div class="alert alert-danger">@message</div>
-			}
+			<div class="alert alert-danger">
+				@for(message <- messageList){
+					@message<br>
+				}
+			</div>
 		}
 		<button type="button" class="btn btn-default" id="add-button">出発駅追加</button>
 		<button type="button" class="btn btn-default" id="del-button" disabled="true">出発駅削除</button>

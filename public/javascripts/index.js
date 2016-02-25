@@ -5,6 +5,9 @@ $(function(){
        // 追加された入力フォームの総数（デフォルトo個）
        var addedFormCount = 0
 
+       // 初期表示時の削除ボタンの活性状態を決定
+       updateDelButtonState()
+
               // 入力フォームを動的に追加する【TODO】微調整
               $('#add-button').click(function(){
                      addedFormCount++
