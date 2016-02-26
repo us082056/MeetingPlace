@@ -1,19 +1,20 @@
 package controllers
 
-import models.Station
+import scala.collection.immutable.Nil
 import models.InputForm
-import play.api.data._
-import play.api.data.Forms._
-import play.api.mvc.Action
-import play.api.mvc.Controller
-import servicies.LonLatCalculator
-import util.StationsManager
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
 import models.Station
 import play.Logger
-import scala.collection.immutable.Nil
+import play.api.data.Form
+import play.api.data.Forms.list
+import play.api.data.Forms.mapping
+import play.api.data.Forms.text
+import play.api.mvc.Action
+import play.api.mvc.Controller
 import play.api.mvc.Result
+import servicies.LonLatCalculator
+import util.StationsManager
+import akka.dispatch.SaneRejectedExecutionHandler
+import scala.collection.mutable.Map
 
 class SearchController extends Controller {
   val inputForm = Form(
@@ -37,55 +38,59 @@ class SearchController extends Controller {
 
         // バリデーションOK
         form => {
-          var inputStations = form.names.filter(v => (v != "")).map {
-            v => new Station(v, "", null)
-          }
 
+          // TODO 同じフィルター条件をまとめたい
           // 相関チェック（入力項目数チェック）
-          if (inputStations.size < 2) {
+          if (form.names.filter(name => name != "").size < 2) {
             Logger.debug("項目数エラー")
             return BadRequest(views.html.index(inputForm.bindFromRequest(), List("2つ以上の出発駅を入力してください")))
           }
 
           // 相関チェック（キーワード存在チェック）
-          var errorMsgList = inputStations.filter { s => StationsManager.countOf(s) == 0 }.map { s =>
-            s.name + "が見つかりません、駅名が正しいか確認してください"
+          val errorMsgList = form.names.filter(name => name != "").filter { name => StationsManager.countOf(name) == 0 }.map { name =>
+            name + "が見つかりません、駅名が正しいか確認してください"
           }
-
           if (errorMsgList.size != 0) {
             Logger.debug("存在チェックエラー")
             return BadRequest(views.html.index(inputForm.bindFromRequest(), errorMsgList))
           }
 
-          //経緯度取得
-          // TODO 複数ヒットした時の仕組み必要
-          // TODO よく考えればきれいに書けそう
-          // TODO Manager内に隠蔽したい（Stationクラス単位の処理はManager内に閉じたい）
-          inputStations.foreach { s =>
-            if (StationsManager.countOf(s) == 1) {
-              Logger.debug("一件ヒット")
-              Logger.debug(s.name)
-              s.code = StationsManager.nameToCode(s.name)
+          var inputStations = List[Station]()
+          var sameNameMap = Map[String, List[String]]()
 
-              //webAPIで駅コードの経緯度取得する
-              s.lonLat = StationsManager.codeToLonLat(s.code)
+          form.names.filter(name => name != "").foreach { name =>
+            if (StationsManager.countOf(name) == 1) {
+              Logger.debug("一件ヒット:" + name)
+
+              val code = StationsManager.getCode(name)
+              val lonLat = StationsManager.getLonLat(code)
+              val station = new Station(name, code, lonLat)
+              inputStations :+= station
             } else {
-              StationsManager.getSameNameList(s.name).foreach { v =>
-                Logger.debug("複数件ヒット")
-                Logger.debug(v)
+              Logger.debug("複数件ヒット:" + name)
+
+              val sameNameList = StationsManager.getSameNameList(name)
+              sameNameMap.update(name, sameNameList)
+
+              // TODO 以下暫定
+              {
+                val code = StationsManager.getCode(name)
+                val lonLat = StationsManager.getLonLat(code)
+                val station = new Station(name, code, lonLat)
+                inputStations :+= station
               }
-              // TODO 以下暫定 
-              s.code = StationsManager.nameToCode(s.name)
-              s.lonLat = StationsManager.codeToLonLat(s.code)
             }
           }
 
-          //TODO 複数候補ある場合
+          //TODO 複数候補ある場合（暫定）
+          {
+            sameNameMap.keys.foreach { key =>
+              Logger.debug("key:" + key)
+              sameNameMap(key).foreach { name => Logger.debug("name:" + name) }
+            }
+          }
 
-          //中心経緯度計算
           val centerLonLat = new LonLatCalculator().calcCenterLonLat(inputStations)
-
-          //最寄駅取得
           val nearStationsName = StationsManager.getNearStationsName(centerLonLat)
 
           //出力 TODO(仮）

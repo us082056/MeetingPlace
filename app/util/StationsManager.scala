@@ -38,8 +38,8 @@ object StationsManager {
   }
 
   // comment
-  def countOf(station: Station) = stationsMap.filterKeys { k =>
-    k.startsWith(station.name + "(")
+  def countOf(name: String) = stationsMap.filterKeys { k =>
+    k.startsWith(name + "(")
   }.size
 
   def getSameNameList(name: String) = stationsMap.filterKeys { k =>
@@ -47,11 +47,11 @@ object StationsManager {
   }.keys.toList
 
   // TODO comment
-  def nameToCode(name: String) = stationsMap.filterKeys { k =>
+  def getCode(name: String) = stationsMap.filterKeys { k =>
     k.startsWith(name + "(")
   }.values.toList(0)
 
-  def codeToLonLat(code: String) = {
+  def getLonLat(code: String) = {
     val urlStr = "http://www.ekidata.jp/api/s/" + code + ".xml"
     val xml = new WebAccessor().responseXmlSync(urlStr, "station")
 

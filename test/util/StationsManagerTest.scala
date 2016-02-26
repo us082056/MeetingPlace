@@ -14,13 +14,13 @@ class StationsManagerTest extends FlatSpec with BeforeAndAfter {
 
   // 駅名から駅コードへ変換（1行目データ）
   "駅名が函館" should "駅コードは1110101か1111922" in {
-    val station_cd = StationsManager.nameToCode("函館")
+    val station_cd = StationsManager.getCode("函館")
     assert(station_cd == "1110101" || station_cd == "1111922")
   }
 
   // 駅名から駅コードへ変換（最終行データ）
   "駅名が関門海峡めかり" should "駅コードは9992804" in {
-    val station_cd = StationsManager.nameToCode("関門海峡めかり")
+    val station_cd = StationsManager.getCode("関門海峡めかり")
     assert(station_cd == "9992804")
   }
 
@@ -31,9 +31,9 @@ class StationsManagerTest extends FlatSpec with BeforeAndAfter {
     val app = Helpers.fakeApplication()
 
     Helpers.start(app)
-    val station_cd = StationsManager.nameToCode("品川")
+    val station_cd = StationsManager.getCode("品川")
 
-    val lonLat = StationsManager.codeToLonLat(station_cd)
+    val lonLat = StationsManager.getLonLat(station_cd)
     assert(lonLat.lon == 139.73809)
     assert(lonLat.lat == 35.628284)
 
@@ -44,8 +44,8 @@ class StationsManagerTest extends FlatSpec with BeforeAndAfter {
     val app = Helpers.fakeApplication()
 
     Helpers.start(app)
-    val station_cd = StationsManager.nameToCode("品川")
-    val lonLat = StationsManager.codeToLonLat(station_cd)
+    val station_cd = StationsManager.getCode("品川")
+    val lonLat = StationsManager.getLonLat(station_cd)
 
     val stationsName = StationsManager.getNearStationsName(lonLat)
     assert(stationsName(0).startsWith("品川"))
