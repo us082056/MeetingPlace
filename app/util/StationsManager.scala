@@ -11,26 +11,45 @@ import models.Station
 
 /*
  * 駅情報関係の情報やり取りを管理するクラス
- * ※重複する駅は上書きで保持（同じ駅で路線が違うだけのデータが含まれるため）
  * TODO Javaっぽい書き方なのでそのうち直したい
+ * TODO startsWithの"("をどうにかする
+ * TODO 扱うデータ範囲の思想がぶれてる
  */
 object StationsManager {
 
-  //key:駅名、value：駅コード
+  //key:駅名（県名）、value：駅コード
   private var stationsMap = Map[String, String]()
 
+  // TODO comment
   def init(): Unit = {
-    val reader = CSVReader.open(new File(".//resources//stations.csv"))
-    val readDataList = reader.allWithHeaders()
+    var prefsMap = Map[String, String]()
+    var reader = CSVReader.open(new File(".//resources//prefs.csv"))
 
-    for (lineMap <- readDataList) {
-      stationsMap.update(lineMap("station_name"), lineMap("station_cd"))
+    reader.allWithHeaders().foreach { f =>
+      prefsMap.update(f("pref_cd"), f("pref_name"))
+    }
+
+    reader = CSVReader.open(new File(".//resources//stations.csv"))
+    reader.allWithHeaders().foreach { f =>
+      val key = f("station_name") + "(" + prefsMap(f("pref_cd")) + ")"
+      val value = f("station_cd")
+      stationsMap.update(key, value)
     }
   }
 
-  def nameToCode(name: String) = stationsMap(name)
+  // comment
+  def countOf(station: Station) = stationsMap.filterKeys { k =>
+    k.startsWith(station.name + "(")
+  }.size
 
-  def exists(station: Station) = stationsMap.isDefinedAt(station.name)
+  def getSameNameList(name: String) = stationsMap.filterKeys { k =>
+    k.startsWith(name + "(")
+  }.keys.toList
+
+  // TODO comment
+  def nameToCode(name: String) = stationsMap.filterKeys { k =>
+    k.startsWith(name + "(")
+  }.values.toList(0)
 
   def codeToLonLat(code: String) = {
     val urlStr = "http://www.ekidata.jp/api/s/" + code + ".xml"

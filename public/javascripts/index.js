@@ -2,7 +2,7 @@ $(function(){
        // html表示時の入力フォーム総数
        var defaultFormIdx = $('#input-group').children("div").length - 1
 
-       // 追加された入力フォームの総数（デフォルトo個）
+       // 追加された入力フォームの総数（デフォルト0個）
        var addedFormCount = 0
 
        // 初期表示時の削除ボタンの活性状態を決定
