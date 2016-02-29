@@ -48,8 +48,13 @@ object StationsManager {
     k.startsWith(name + "(")
   }.keys.toList
 
-  // TODO comment
-  def getCode(name: String) = stationsMap.filterKeys { k =>
+  def generateStation(name: String) = {
+    val code = StationsManager.getCode(name)
+    val lonLat = StationsManager.getLonLat(code)
+    new Station(name, code, lonLat)
+  }
+
+  private def getCode(name: String) = stationsMap.filterKeys { k =>
     // TODO いけてない
     if (k.contains("(")) {
       k.startsWith(name)
@@ -58,7 +63,7 @@ object StationsManager {
     }
   }.values.toList(0)
 
-  def getLonLat(code: String) = {
+  private def getLonLat(code: String) = {
     val urlStr = "http://www.ekidata.jp/api/s/" + code + ".xml"
     val xml = new WebAccessor().responseXmlSync(urlStr, "station")
 

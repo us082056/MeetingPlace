@@ -1,6 +1,8 @@
 package controllers
 
 import scala.collection.immutable.Nil
+import scala.collection.mutable.Map
+
 import models.InputForm
 import models.Station
 import play.Logger
@@ -11,10 +13,7 @@ import play.api.data.Forms.text
 import play.api.mvc.Action
 import play.api.mvc.Controller
 import play.api.mvc.Result
-import servicies.LonLatCalculator
 import util.StationsManager
-import akka.dispatch.SaneRejectedExecutionHandler
-import scala.collection.mutable.Map
 
 class SearchController extends Controller {
   val inputForm = Form(
@@ -26,7 +25,7 @@ class SearchController extends Controller {
   }
 
   //requestをimplicitで宣言することで、暗黙的にリクエストを引数として受け取る
-  def search = Action { implicit request =>
+  def inspection = Action { implicit request =>
     def handle: Result = {
       inputForm.bindFromRequest.fold(
 
@@ -40,7 +39,6 @@ class SearchController extends Controller {
         form => {
           val filteredNameList = form.names.filter { name => name != "" }
 
-          // TODO 同じフィルター条件をまとめたい
           // 相関チェック（入力項目数チェック）
           if (filteredNameList.size < 2) {
             Logger.debug("項目数エラー")
@@ -53,7 +51,6 @@ class SearchController extends Controller {
 
           filteredNameList.foreach { name =>
             val count = StationsManager.countOf(name)
-
             if (count == 0) {
               errorMsgList :+= (name + "が見つかりません、駅名が正しいか確認してください")
             } else if (count >= 2) {
@@ -63,12 +60,7 @@ class SearchController extends Controller {
               sameNameMap.update(name, sameNameList)
             } else {
               Logger.debug("一件ヒット:" + name)
-
-              // TODO 下記3件のvalはまとめられそう
-              val code = StationsManager.getCode(name)
-              val lonLat = StationsManager.getLonLat(code)
-              val station = new Station(name, code, lonLat)
-              stationList :+= station
+              stationList :+= StationsManager.generateStation(name)
             }
           }
 
@@ -78,29 +70,28 @@ class SearchController extends Controller {
             return BadRequest(views.html.index(inputForm.bindFromRequest(), errorMsgList))
           }
 
-          //TODO 複数候補ある場合
+          // 同じ名前が複数ある駅が入力された場合は選択画面を表示
           if (sameNameMap.size != 0) {
             return Ok(views.html.candidate(stationList, sameNameMap))
           }
 
-          val nearStationsName = StationsManager.searchCenterStationName(stationList)
-
-          //出力 TODO(仮）
-          return Ok(views.html.result(nearStationsName))
+          // 検索ロジック実行
+          searchLogic(stationList)
         })
     }
     handle
   }
 
-  def search2 = Action { implicit request =>
-    Logger.debug("■search2")
+  def search = Action { implicit request =>
     val stationList = inputForm.bindFromRequest().get.names.map { name =>
       Logger.debug("一件ヒット:" + name)
-      val code = StationsManager.getCode(name)
-      val lonLat = StationsManager.getLonLat(code)
-      new Station(name, code, lonLat)
+      StationsManager.generateStation(name)
     }
 
+    searchLogic(stationList)
+  }
+
+  private def searchLogic(stationList: List[Station]) = {
     val nearStationsName = StationsManager.searchCenterStationName(stationList)
 
     //出力 TODO(仮）
