@@ -1,0 +1,50 @@
+@(stationList:List[Station], sameNameMap:scala.collection.mutable.Map[String, List[String]])
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>集合駅検索</title>
+	<meta name="keywords" content="[TODO]">
+	<meta name="description" content="[TODO]">
+	<!-- BootstrapのCSS読み込み -->
+	<link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap-3.3.6-dist/css/bootstrap.min.css")">
+	<!-- jQuery読み込み -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<!-- BootstrapのJS読み込み -->
+	<script src="@routes.Assets.at("bootstrap-3.3.6-dist/js/bootstrap.min.js")" type="text/javascript"></script>
+</head>
+<body>
+	<div class="well">
+		<h3>集合駅検索</h3>
+			<div class="alert alert-info">
+				下記の駅は複数の候補があります、検索に使用する駅を選択してください
+			</div>
+		<form action="/search2" method="get">
+			<div id="input-group">
+				@import java.lang.Integer; var idx=0
+				@for(key <- sameNameMap.keys){
+					<div class="form-group" id="key">
+						<label for="station-name[@idx]">@key</label>
+						<select class="form-control" id="station-name[@idx]" name="station-name[@idx]">
+						@for(value <- sameNameMap(key)){
+							
+								<option>@value</option>
+						}
+						</select>
+					</div>
+					@{idx = idx + 1}
+				}
+
+				@for(station <- stationList){
+					<input type="hidden" id="station-name[@idx]" name="station-name[@idx]" value=@station.name>
+					@{idx = idx + 1}
+				}
+			</div>
+			<input type="submit" value="検索" class="btn btn-primary">
+		</form>
+	</div>
+</body>
+</html>

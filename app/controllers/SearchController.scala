@@ -38,65 +38,72 @@ class SearchController extends Controller {
 
         // バリデーションOK
         form => {
+          val filteredNameList = form.names.filter { name => name != "" }
 
           // TODO 同じフィルター条件をまとめたい
           // 相関チェック（入力項目数チェック）
-          if (form.names.filter(name => name != "").size < 2) {
+          if (filteredNameList.size < 2) {
             Logger.debug("項目数エラー")
             return BadRequest(views.html.index(inputForm.bindFromRequest(), List("2つ以上の出発駅を入力してください")))
           }
 
-          // 相関チェック（キーワード存在チェック）
-          val errorMsgList = form.names.filter(name => name != "").filter { name => StationsManager.countOf(name) == 0 }.map { name =>
-            name + "が見つかりません、駅名が正しいか確認してください"
+          var errorMsgList = List[String]()
+          var stationList = List[Station]()
+          var sameNameMap = Map[String, List[String]]()
+
+          filteredNameList.foreach { name =>
+            val count = StationsManager.countOf(name)
+
+            if (count == 0) {
+              errorMsgList :+= (name + "が見つかりません、駅名が正しいか確認してください")
+            } else if (count >= 2) {
+              Logger.debug("複数件ヒット:" + name)
+
+              val sameNameList = StationsManager.getSameNameList(name)
+              sameNameMap.update(name, sameNameList)
+            } else {
+              Logger.debug("一件ヒット:" + name)
+
+              // TODO 下記3件のvalはまとめられそう
+              val code = StationsManager.getCode(name)
+              val lonLat = StationsManager.getLonLat(code)
+              val station = new Station(name, code, lonLat)
+              stationList :+= station
+            }
           }
+
+          // 相関チェック（キーワード存在チェック）
           if (errorMsgList.size != 0) {
             Logger.debug("存在チェックエラー")
             return BadRequest(views.html.index(inputForm.bindFromRequest(), errorMsgList))
           }
 
-          var inputStations = List[Station]()
-          var sameNameMap = Map[String, List[String]]()
-
-          form.names.filter(name => name != "").foreach { name =>
-            if (StationsManager.countOf(name) == 1) {
-              Logger.debug("一件ヒット:" + name)
-
-              val code = StationsManager.getCode(name)
-              val lonLat = StationsManager.getLonLat(code)
-              val station = new Station(name, code, lonLat)
-              inputStations :+= station
-            } else {
-              Logger.debug("複数件ヒット:" + name)
-
-              val sameNameList = StationsManager.getSameNameList(name)
-              sameNameMap.update(name, sameNameList)
-
-              // TODO 以下暫定
-              {
-                val code = StationsManager.getCode(name)
-                val lonLat = StationsManager.getLonLat(code)
-                val station = new Station(name, code, lonLat)
-                inputStations :+= station
-              }
-            }
+          //TODO 複数候補ある場合
+          if (sameNameMap.size != 0) {
+            return Ok(views.html.candidate(stationList, sameNameMap))
           }
 
-          //TODO 複数候補ある場合（暫定）
-          {
-            sameNameMap.keys.foreach { key =>
-              Logger.debug("key:" + key)
-              sameNameMap(key).foreach { name => Logger.debug("name:" + name) }
-            }
-          }
-
-          val centerLonLat = new LonLatCalculator().calcCenterLonLat(inputStations)
-          val nearStationsName = StationsManager.getNearStationsName(centerLonLat)
+          val nearStationsName = StationsManager.searchCenterStationName(stationList)
 
           //出力 TODO(仮）
-          return Ok(views.html.result(nearStationsName(0)))
+          return Ok(views.html.result(nearStationsName))
         })
     }
     handle
+  }
+
+  def search2 = Action { implicit request =>
+    Logger.debug("■search2")
+    val stationList = inputForm.bindFromRequest().get.names.map { name =>
+      Logger.debug("一件ヒット:" + name)
+      val code = StationsManager.getCode(name)
+      val lonLat = StationsManager.getLonLat(code)
+      new Station(name, code, lonLat)
+    }
+
+    val nearStationsName = StationsManager.searchCenterStationName(stationList)
+
+    //出力 TODO(仮）
+    Ok(views.html.result(nearStationsName))
   }
 }

@@ -7,7 +7,9 @@ import com.github.tototoshi.csv.defaultCSVFormat
 import models.LonLat
 import models.Station
 import scala.xml.Null
+import play.Logger
 import models.Station
+import servicies.LonLatCalculator
 
 /*
  * 駅情報関係の情報やり取りを管理するクラス
@@ -48,7 +50,12 @@ object StationsManager {
 
   // TODO comment
   def getCode(name: String) = stationsMap.filterKeys { k =>
-    k.startsWith(name + "(")
+    // TODO いけてない
+    if (k.contains("(")) {
+      k.startsWith(name)
+    } else {
+      k.startsWith(name + "(")
+    }
   }.values.toList(0)
 
   def getLonLat(code: String) = {
@@ -61,14 +68,23 @@ object StationsManager {
     new LonLat(lon, lat)
   }
 
-  def getNearStationsName(lonLat: LonLat) = {
-    val urlStr = "http://map.simpleapi.net/stationapi?x=" + lonLat.lon + "&y= " + lonLat.lat + "&output=xml"
+  // TODO
+  def searchCenterStationName(stations: List[Station]): String = {
+    val centerLonLat = new LonLatCalculator().calcCenterLonLat(stations)
+    val urlStr = "http://map.simpleapi.net/stationapi?x=" + centerLonLat.lon + "&y= " + centerLonLat.lat + "&output=xml"
+    Logger.debug("URL: " + urlStr)
     val xmls = new WebAccessor().responseXmlSync(urlStr, "station")
 
     // TODO WSの仕様でレスポンスがiso・・・で来る、無理やり個々でUTF-8に変換してる（もっとうまくやりたい）
-    xmls.map {
-      xml =>
-        new String((xml \ "name").text.getBytes("iso-8859-1"), "utf-8")
+    // simpleAPIの仕様で、近隣に駅がないと変な感じで帰ってくる、下記は対応できているがもっとうまく書きたい
+    val seq = xmls.map { xml =>
+      new String((xml \ "name").text.getBytes("iso-8859-1"), "utf-8")
+    }
+
+    if (seq.size == 0) {
+      return "中間地点近くに駅がありません"
+    } else {
+      seq(0)
     }
   }
 }

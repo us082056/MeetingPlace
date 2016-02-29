@@ -47,7 +47,7 @@ class StationsManagerTest extends FlatSpec with BeforeAndAfter {
     val station_cd = StationsManager.getCode("品川")
     val lonLat = StationsManager.getLonLat(station_cd)
 
-    val stationsName = StationsManager.getNearStationsName(lonLat)
+    val stationsName = StationsManager.searchCenterStationName(lonLat)
     assert(stationsName(0).startsWith("品川"))
 
     Helpers.stop(app)
