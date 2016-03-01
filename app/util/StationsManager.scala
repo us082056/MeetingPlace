@@ -25,8 +25,8 @@ object StationsManager {
   // TODO comment
   def init(): Unit = {
     var prefsMap = Map[String, String]()
-    var reader = CSVReader.open(new File(".//resources//prefs.csv"))
 
+    var reader = CSVReader.open(new File(".//resources//prefs.csv"))
     reader.allWithHeaders().foreach { f =>
       prefsMap.update(f("pref_cd"), f("pref_name"))
     }
@@ -77,7 +77,6 @@ object StationsManager {
   def searchCenterStationName(stations: List[Station]): String = {
     val centerLonLat = new LonLatCalculator().calcCenterLonLat(stations)
     val urlStr = "http://map.simpleapi.net/stationapi?x=" + centerLonLat.lon + "&y= " + centerLonLat.lat + "&output=xml"
-    Logger.debug("URL: " + urlStr)
     val xmls = new WebAccessor().responseXmlSync(urlStr, "station")
 
     // TODO WSの仕様でレスポンスがiso・・・で来る、無理やり個々でUTF-8に変換してる（もっとうまくやりたい）

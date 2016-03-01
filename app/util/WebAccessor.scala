@@ -4,11 +4,11 @@ import scala.concurrent.Await
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 import scala.xml.NodeSeq
-
 import play.api.Play.current
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.ws.WS
 import play.api.libs.ws.WSRequest
+import play.Logger
 
 /*
  * 外部webサービスへのアクセスを行うクラス
@@ -16,6 +16,7 @@ import play.api.libs.ws.WSRequest
  */
 class WebAccessor {
   def responseXmlSync(urlStr: String, topTag: String) = {
+    Logger.debug("URL: " + urlStr)
     val request: WSRequest = WS.url(urlStr)
 
     // リクエスト成功時、指定タグでNodeSeqを取得

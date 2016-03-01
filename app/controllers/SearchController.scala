@@ -31,13 +31,13 @@ class SearchController extends Controller {
 
         // バリデーションNG
         validationErrorForm => {
-          Logger.debug("validation error")
+          Logger.debug("バリデーションエラー")
           return BadRequest(views.html.index(validationErrorForm, Nil))
         },
 
         // バリデーションOK
         form => {
-          val filteredNameList = form.names.filter { name => name != "" }
+          val filteredNameList = form.names.filter { name => (name != "") }
 
           // 相関チェック（入力項目数チェック）
           if (filteredNameList.size < 2) {
@@ -55,7 +55,6 @@ class SearchController extends Controller {
               errorMsgList :+= (name + "が見つかりません、駅名が正しいか確認してください")
             } else if (count >= 2) {
               Logger.debug("複数件ヒット:" + name)
-
               val sameNameList = StationsManager.getSameNameList(name)
               sameNameMap.update(name, sameNameList)
             } else {

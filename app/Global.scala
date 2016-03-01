@@ -6,5 +6,4 @@ object Global extends GlobalSettings {
   override def onStart(app: Application) {
     StationsManager.init()
   }
-
 }
