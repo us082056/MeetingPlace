@@ -84,9 +84,6 @@ object StationsManager {
     val seq = xmls.map { xml =>
       new String((xml \ "name").text.getBytes("iso-8859-1"), "utf-8")
     }
-    
-    seq.foreach { x => Logger.debug(x) }
-
     seq.foreach { x => Logger.debug(x) }
 
     if (seq.size == 0) {
