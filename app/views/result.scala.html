@@ -1,4 +1,5 @@
 @(result: String)
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -6,7 +7,6 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>集合駅検索</title>
-	<meta name="keywords" content="[TODO]">
 	<meta name="description" content="[TODO]">
 	<!-- BootstrapのCSS読み込み -->
 	<link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap-3.3.6-dist/css/bootstrap.min.css")">
@@ -17,8 +17,8 @@
 </head>
 <body>
 	<div class="well">
-		<h3>集合駅検索</h3>
-		@result<br>
+		<h1>集合駅検索</h1>
+		<p>@result</p>
 		<a href="/index">検索画面へ戻る</a>
 </div>
 </body>

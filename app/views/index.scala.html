@@ -7,7 +7,6 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>集合駅検索</title>
-	<meta name="keywords" content="[TODO]">
 	<meta name="description" content="[TODO]">
 	<!-- BootstrapのCSS読み込み -->
 	<link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap-3.3.6-dist/css/bootstrap.min.css")">
@@ -20,7 +19,7 @@
 </head>
 <body>
 	<div class="well">
-		<h3>集合駅検索</h3>
+		<h1>集合駅検索</h1>
 		@if(messageList.size != 0){
 			<div class="alert alert-danger">
 				@for(message <- messageList){
@@ -50,8 +49,8 @@
 					}
 				}
 			</div>
-	<input type="submit" value="検索" class="btn btn-primary">
-</form>
-</div>
+			<input type="submit" value="検索" class="btn btn-primary">
+		</form>
+	</div>
 </body>
 </html>
