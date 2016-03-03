@@ -1,4 +1,4 @@
-@(result: String)
+@(message: String)
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -18,7 +18,9 @@
 <body>
 	<div class="well">
 		<h1>集合駅検索</h1>
-		<p>@result</p>
+		<div class="alert alert-danger">
+			@message
+		</div>
 		<a href="/index">検索画面へ戻る</a>
 	</div>
 </body>
