@@ -1,4 +1,4 @@
-@(result: String)
+@(candidateSeq: Seq[String])
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -18,8 +18,21 @@
 <body>
 	<div class="well">
 		<h1>集合駅検索</h1>
-		<p>@result</p>
-		<a href="/index">検索画面へ戻る</a>
+		@if(candidateSeq.isEmpty){
+			<div class="alert alert-danger">
+				中間地点付近に駅がありません
+			</div>
+		}else{
+			<div class="alert alert-info">
+				以下の集合駅候補が見つかりました
+			</div>
+			<ul>
+			@for(value <- candidateSeq){
+				<li>@value</li>
+			}
+			</ul>
+		}
+		<input type="button" onclick="location.href='/index'"value="検索画面へ戻る" class="btn btn-primary">
 	</div>
 </body>
 </html>

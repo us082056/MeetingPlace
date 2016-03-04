@@ -64,13 +64,13 @@ class SearchController extends Controller {
           }
 
           // 相関チェック（キーワード存在チェック）
-          if (errorMsgList.size != 0) {
+          if (!errorMsgList.isEmpty) {
             Logger.debug("存在チェックエラー")
             return BadRequest(views.html.index(inputForm.bindFromRequest(), errorMsgList))
           }
 
           // 同じ名前が複数ある駅が入力された場合は選択画面を表示
-          if (sameNameMap.size != 0) {
+          if (!sameNameMap.isEmpty) {
             return Ok(views.html.candidate(stationList, sameNameMap))
           }
 
@@ -91,9 +91,7 @@ class SearchController extends Controller {
   }
 
   private def searchLogic(stationList: List[Station]) = {
-    val nearStationsName = StationsManager.searchCenterStationName(stationList)
-
-    //出力 TODO(仮）
-    Ok(views.html.result(nearStationsName))
+    val candidateSeq = StationsManager.searchCenterStationName(stationList)
+    Ok(views.html.result(candidateSeq))
   }
 }

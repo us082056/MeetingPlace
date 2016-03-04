@@ -22,7 +22,6 @@ object StationsManager {
   //key:駅名（県名）、value：駅コード
   private var stationsMap = Map[String, String]()
 
-  // TODO comment
   def init(): Unit = {
     var prefsMap = Map[String, String]()
 
@@ -39,7 +38,6 @@ object StationsManager {
     }
   }
 
-  // comment
   def countOf(name: String) = stationsMap.filterKeys { k =>
     k.startsWith(name + "(")
   }.size
@@ -48,20 +46,24 @@ object StationsManager {
     k.startsWith(name + "(")
   }.keys.toList
 
+  // countOfの結果が1件だけの場合に使用可能
   def generateStation(name: String) = {
-    val code = StationsManager.getCode(name)
-    val lonLat = StationsManager.getLonLat(code)
-    new Station(name, code, lonLat)
-  }
-
-  private def getCode(name: String) = stationsMap.filterKeys { k =>
-    // TODO いけてない
-    if (k.contains("(")) {
-      k.startsWith(name)
-    } else {
-      k.startsWith(name + "(")
+    val fixedName = {
+      if (name.contains("(")) {
+        // "("が含まれる場合は県名まで特定できているのでnameをそのまま使用
+        name
+      } else {
+        // 名前解決（県名まで特定）
+        stationsMap.filterKeys { key =>
+          key.startsWith(name + "(")
+        }.keys.toList(0)
+      }
     }
-  }.values.toList(0)
+
+    val code = stationsMap(fixedName)
+    val lonLat = StationsManager.getLonLat(code)
+    new Station(fixedName, code, lonLat)
+  }
 
   private def getLonLat(code: String) = {
     val urlStr = "http://www.ekidata.jp/api/s/" + code + ".xml"
@@ -74,22 +76,14 @@ object StationsManager {
   }
 
   // TODO
-  def searchCenterStationName(stations: List[Station]): String = {
+  def searchCenterStationName(stations: List[Station]) = {
     val centerLonLat = new LonLatCalculator().calcCenterLonLat(stations)
     val urlStr = "http://map.simpleapi.net/stationapi?x=" + centerLonLat.lon + "&y= " + centerLonLat.lat + "&output=xml"
     val xmls = new WebAccessor().responseXmlSync(urlStr, "station")
 
     // TODO WSの仕様でレスポンスがiso・・・で来る、無理やり個々でUTF-8に変換してる（もっとうまくやりたい）
-    // simpleAPIの仕様で、近隣に駅がないと変な感じで帰ってくる、下記は対応できているがもっとうまく書きたい
-    val seq = xmls.map { xml =>
+    xmls.map { xml =>
       new String((xml \ "name").text.getBytes("iso-8859-1"), "utf-8")
-    }
-    seq.foreach { x => Logger.debug(x) }
-
-    if (seq.size == 0) {
-      return "中間地点近くに駅がありません"
-    } else {
-      seq(0)
     }
   }
 }
