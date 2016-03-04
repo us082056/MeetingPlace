@@ -13,7 +13,6 @@ import servicies.LonLatCalculator
 
 /*
  * 駅情報関係の情報やり取りを管理するクラス
- * TODO Javaっぽい書き方なのでそのうち直したい
  * TODO startsWithの"("をどうにかする
  * TODO 扱うデータ範囲の思想がぶれてる
  */
@@ -75,13 +74,12 @@ object StationsManager {
     new LonLat(lon, lat)
   }
 
-  // TODO
   def searchCenterStationName(stations: List[Station]) = {
     val centerLonLat = new LonLatCalculator().calcCenterLonLat(stations)
     val urlStr = "http://map.simpleapi.net/stationapi?x=" + centerLonLat.lon + "&y= " + centerLonLat.lat + "&output=xml"
     val xmls = new WebAccessor().responseXmlSync(urlStr, "station")
 
-    // TODO WSの仕様でレスポンスがiso・・・で来る、無理やり個々でUTF-8に変換してる（もっとうまくやりたい）
+    // WSの仕様でレスポンスの文字コードがisoなのでUTF-8に変換
     xmls.map { xml =>
       new String((xml \ "name").text.getBytes("iso-8859-1"), "utf-8")
     }
