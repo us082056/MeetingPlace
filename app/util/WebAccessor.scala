@@ -10,10 +10,6 @@ import play.api.libs.ws.WS
 import play.api.libs.ws.WSRequest
 import play.Logger
 
-/*
- * 外部webサービスへのアクセスを行うクラス
- * TODO　レスポンスの文字列が文字化けしている
- */
 class WebAccessor {
   def responseXmlSync(urlStr: String, topTag: String) = {
     Logger.debug("URL: " + urlStr)

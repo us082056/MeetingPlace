@@ -13,7 +13,7 @@ import play.api.data.Forms.text
 import play.api.mvc.Action
 import play.api.mvc.Controller
 import play.api.mvc.Result
-import util.StationsManager
+import servicies.StationsManager
 
 class SearchController extends Controller {
   val inputForm = Form(
@@ -42,7 +42,7 @@ class SearchController extends Controller {
           // 相関チェック（入力項目数チェック）
           if (filteredNameList.size < 2) {
             Logger.debug("項目数エラー")
-            return BadRequest(views.html.index(inputForm.bindFromRequest(), List("2つ以上の出発駅を入力してください")))
+            return BadRequest(views.html.index(inputForm.bindFromRequest(), List("2つ以上の出発駅を入力してください。")))
           }
 
           var errorMsgList = List[String]()
@@ -52,7 +52,7 @@ class SearchController extends Controller {
           filteredNameList.foreach { name =>
             val count = StationsManager.countOf(name)
             if (count == 0) {
-              errorMsgList :+= (name + "が見つかりません、駅名が正しいか確認してください")
+              errorMsgList :+= (name + "が見つかりません、駅名が正しいか確認してください。")
             } else if (count >= 2) {
               Logger.debug("複数件ヒット:" + name)
               val sameNameList = StationsManager.getSameNameList(name)
@@ -91,7 +91,7 @@ class SearchController extends Controller {
   }
 
   private def searchLogic(stationList: List[Station]) = {
-    val candidateSeq = StationsManager.searchCenterStationName(stationList)
+    val candidateSeq = StationsManager.searchCandidate(stationList)
     Ok(views.html.result(candidateSeq))
   }
 }

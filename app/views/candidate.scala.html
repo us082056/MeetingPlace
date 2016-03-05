@@ -19,7 +19,7 @@
 	<div class="well">
 		<h1>集合駅検索</h1>
 			<div class="alert alert-info">
-				下記の駅は複数の候補があります、検索に使用する駅を選択してください
+				下記の駅は複数の候補があります、検索に使用する駅を選択してください。
 			</div>
 		<form action="/search" method="get">
 			<div id="input-group">
@@ -29,7 +29,6 @@
 						<label for="station-name[@idx]">@key</label>
 						<select class="form-control" id="station-name[@idx]" name="station-name[@idx]">
 						@for(value <- sameNameMap(key)){
-							
 								<option>@value</option>
 						}
 						</select>

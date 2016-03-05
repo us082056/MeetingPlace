@@ -1,7 +1,6 @@
-package servicies
+package util
 
 import models._
-import play.api.data.Mapping
 
 class LonLatCalculator {
   def calcCenterLonLat(stations: List[Station]) = {

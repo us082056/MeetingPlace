@@ -2,6 +2,7 @@ package servicies
 
 import org.scalatest.FlatSpec
 import models._
+import util.LonLatCalculator
 
 class LonLatCalculatorTest extends FlatSpec {
 

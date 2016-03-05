@@ -1,4 +1,4 @@
-package util
+package servicies
 
 import java.io.File
 import scala.collection.mutable.Map
@@ -6,10 +6,9 @@ import com.github.tototoshi.csv.CSVReader
 import com.github.tototoshi.csv.defaultCSVFormat
 import models.LonLat
 import models.Station
-import scala.xml.Null
-import play.Logger
 import models.Station
-import servicies.LonLatCalculator
+import util.LonLatCalculator
+import util.WebAccessor
 
 /*
  * 駅情報関係の情報やり取りを管理するクラス
@@ -74,7 +73,7 @@ object StationsManager {
     new LonLat(lon, lat)
   }
 
-  def searchCenterStationName(stations: List[Station]) = {
+  def searchCandidate(stations: List[Station]) = {
     val centerLonLat = new LonLatCalculator().calcCenterLonLat(stations)
     val urlStr = "http://map.simpleapi.net/stationapi?x=" + centerLonLat.lon + "&y= " + centerLonLat.lat + "&output=xml"
     val xmls = new WebAccessor().responseXmlSync(urlStr, "station")
@@ -82,6 +81,6 @@ object StationsManager {
     // WSの仕様でレスポンスの文字コードがisoなのでUTF-8に変換
     xmls.map { xml =>
       new String((xml \ "name").text.getBytes("iso-8859-1"), "utf-8")
-    }
+    }.take(3)
   }
 }

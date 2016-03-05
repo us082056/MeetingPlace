@@ -6,7 +6,7 @@ import play.api.Logger
 import play.api.mvc.RequestHeader
 import play.api.mvc.Results.InternalServerError
 import play.api.mvc.Results.NotFound
-import util.StationsManager
+import servicies.StationsManager
 
 object Global extends GlobalSettings {
 
@@ -18,13 +18,13 @@ object Global extends GlobalSettings {
     Logger.error("システムエラー", ex)
 
     Future.successful(InternalServerError(
-      views.html.error("予期せぬエラーが発生しました")))
+      views.html.error("予期せぬエラーが発生しました。")))
   }
 
   override def onHandlerNotFound(request: RequestHeader) = {
     Logger.error("パス存在エラー")
 
     Future.successful(NotFound(
-      views.html.error("指定されたページは存在しません")))
+      views.html.error("指定されたページは存在しません。")))
   }
 }

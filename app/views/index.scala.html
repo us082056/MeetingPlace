@@ -20,7 +20,7 @@
 <body>
 	<div class="well">
 		<h1>集合駅検索</h1>
-		@if(messageList.size != 0){
+		@if(!messageList.isEmpty){
 			<div class="alert alert-danger">
 				@for(message <- messageList){
 					@message<br>
