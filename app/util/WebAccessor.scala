@@ -16,8 +16,8 @@ class WebAccessor {
     val request: WSRequest = WS.url(urlStr)
 
     // リクエスト成功時、指定タグでNodeSeqを取得
-    val futureResult: Future[NodeSeq] = request.get().map {
-      response => response.xml \\ topTag
+    val futureResult: Future[NodeSeq] = request.get().map { response =>
+      response.xml \\ topTag
     }
 
     //　Futureの処理が完了するまで待つ

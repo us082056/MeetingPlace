@@ -9,6 +9,7 @@ import models.Station
 import models.Station
 import util.LonLatCalculator
 import util.WebAccessor
+import models.OutputForm
 
 /*
  * 駅情報関係の情報やり取りを管理するクラス
@@ -76,11 +77,13 @@ object StationsManager {
   def searchCandidate(stations: List[Station]) = {
     val centerLonLat = new LonLatCalculator().calcCenterLonLat(stations)
     val urlStr = "http://map.simpleapi.net/stationapi?x=" + centerLonLat.lon + "&y= " + centerLonLat.lat + "&output=xml"
-    val xmls = new WebAccessor().responseXmlSync(urlStr, "station")
+    val stationXmls = new WebAccessor().responseXmlSync(urlStr, "station")
 
     // WSの仕様でレスポンスの文字コードがisoなのでUTF-8に変換
-    xmls.map { xml =>
-      new String((xml \ "name").text.getBytes("iso-8859-1"), "utf-8")
+    stationXmls.map { xml =>
+      val name = new String((xml \ "name").text.getBytes("iso-8859-1"), "utf-8")
+      val line = new String((xml \ "line").text.getBytes("iso-8859-1"), "utf-8")
+      new OutputForm(name, line)
     }.take(3)
   }
 }

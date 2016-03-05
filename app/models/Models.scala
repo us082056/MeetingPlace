@@ -1,5 +1,6 @@
 package models
 
-case class InputForm(var names: List[String])
-case class LonLat(var lon: Double, var lat: Double)
-case class Station(var name: String, var code: String, var lonLat: LonLat)
+case class InputForm(val names: List[String])
+case class LonLat(val lon: Double, val lat: Double)
+case class Station(val name: String, val code: String, val lonLat: LonLat)
+case class OutputForm(val name: String, val line: String)
