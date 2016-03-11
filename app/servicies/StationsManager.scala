@@ -81,7 +81,7 @@ object StationsManager {
 
     // WSの仕様でレスポンスの文字コードがisoなのでUTF-8に変換
     stationXmls.map { xml =>
-      val name = new String((xml \ "name").text.getBytes("iso-8859-1"), "utf-8")
+      val name = new String((xml \ "name").text.getBytes("iso-8859-1"), "utf-8").replace("駅", "")
       val line = new String((xml \ "line").text.getBytes("iso-8859-1"), "utf-8")
       new CandidateStation(name, line)
     }.take(3)
