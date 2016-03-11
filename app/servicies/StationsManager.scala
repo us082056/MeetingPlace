@@ -9,7 +9,7 @@ import models.Station
 import models.Station
 import util.LonLatCalculator
 import util.WebAccessor
-import models.OutputForm
+import models.CandidateStation
 
 /*
  * 駅情報関係の情報やり取りを管理するクラス
@@ -83,7 +83,7 @@ object StationsManager {
     stationXmls.map { xml =>
       val name = new String((xml \ "name").text.getBytes("iso-8859-1"), "utf-8")
       val line = new String((xml \ "line").text.getBytes("iso-8859-1"), "utf-8")
-      new OutputForm(name, line)
+      new CandidateStation(name, line)
     }.take(3)
   }
 }

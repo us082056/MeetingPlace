@@ -7,7 +7,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>集合駅検索</title>
-	<meta name="description" content="[TODO]">
+	<meta name="description" content="複数の駅名を入力して、集合するのに丁度いい駅を検索します。各駅から中間地点にある駅を検索します。待ち合わせ、飲み会、合コンなどに。">
 	<!-- BootstrapのCSS読み込み -->
 	<link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap-3.3.6-dist/css/bootstrap.min.css")">
 	<!-- jQuery読み込み -->
@@ -21,7 +21,7 @@
 		<div class="alert alert-info">
 			下記の駅は複数の候補があります、検索に使用する駅を選択してください。
 		</div>
-		<div class="panel panel-info">
+		<div class="panel panel-primary">
 			<div class="panel-heading">選択候補</div>
 			<div class="panel-body">
 				<form action="/search" method="get">
@@ -45,6 +45,7 @@
 						}
 					</div>
 					<input type="submit" value="検索" class="btn btn-primary">
+					<input type="button" onclick="location.href='/index'"value="検索画面へ戻る" class="btn btn-primary">
 				</form>
 			</div>
 		<div>

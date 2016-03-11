@@ -2,7 +2,6 @@ package controllers
 
 import scala.collection.immutable.Nil
 import scala.collection.mutable.Map
-
 import models.InputForm
 import models.Station
 import play.Logger
@@ -92,6 +91,6 @@ class SearchController extends Controller {
 
   private def searchLogic(stationList: List[Station]) = {
     val candidateSeq = StationsManager.searchCandidate(stationList)
-    Ok(views.html.result(candidateSeq))
+    Ok(views.html.result(candidateSeq, stationList))
   }
 }
