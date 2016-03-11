@@ -10,6 +10,7 @@ import models.Station
 import util.LonLatCalculator
 import util.WebAccessor
 import models.CandidateStation
+import util.MPLogger
 
 /*
  * 駅情報関係の情報やり取りを管理するクラス
@@ -65,6 +66,7 @@ object StationsManager {
   }
 
   private def getLonLat(code: String) = {
+    MPLogger.info(this, "緯度経度取得")
     val urlStr = "http://www.ekidata.jp/api/s/" + code + ".xml"
     val xml = new WebAccessor().responseXmlSync(urlStr, "station")
 
@@ -75,6 +77,7 @@ object StationsManager {
   }
 
   def searchCandidate(stations: List[Station]) = {
+    MPLogger.info(this, "集合場所候補取得")
     val centerLonLat = new LonLatCalculator().calcCenterLonLat(stations)
     val urlStr = "http://map.simpleapi.net/stationapi?x=" + centerLonLat.lon + "&y= " + centerLonLat.lat + "&output=xml"
     val stationXmls = new WebAccessor().responseXmlSync(urlStr, "station")

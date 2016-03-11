@@ -12,7 +12,7 @@ import play.Logger
 
 class WebAccessor {
   def responseXmlSync(urlStr: String, topTag: String) = {
-    Logger.debug("URL: " + urlStr)
+    MPLogger.info(this, "webアクセス：" + urlStr)
     val request: WSRequest = WS.url(urlStr)
 
     // リクエスト成功時、指定タグでNodeSeqを取得
