@@ -4,7 +4,7 @@ import play.Logger
 
 object MPLogger extends Logger {
   private def createMessage(obj: Object, message: String) = {
-    "[class]:" + obj.getClass + " ,[message]:" + message
+    "[class]:" + obj.getClass + " - [message]:" + message
   }
 
   def info(obj: Object, message: String) = {

@@ -21,7 +21,7 @@ object Global extends GlobalSettings {
   }
 
   override def onHandlerNotFound(request: RequestHeader) = {
-    MPLogger.error(this, "パス存在エラー")
+    MPLogger.error(this, "パス存在エラー（" + request.uri + "）")
     Future.successful(NotFound(
       views.html.error("指定されたページは存在しません。")))
   }
