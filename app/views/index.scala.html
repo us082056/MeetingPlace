@@ -38,11 +38,11 @@
 						@if(inputForm("station-name").indexes.size < 3){
 						    	<div class="form-group" id="station0">
 									<label for="station-name[0]">出発駅1</label>
-									<input type="text" class="form-control" id="station-name[0]" name="station-name[0]" placeholder="駅名" value=@inputForm("station-name[0]").value>
+									<input type="text" class="form-control" id="station-name[0]" name="station-name[0]" placeholder="駅名（例：新宿）" value=@inputForm("station-name[0]").value>
 								</div>
 						    	<div class="form-group" id="station1">
 									<label for="station-name[1]">出発駅2</label>
-									<input type="text" class="form-control" id="station-name[1]" name="station-name[1]" placeholder="駅名" value=@inputForm("station-name[1]").value>
+									<input type="text" class="form-control" id="station-name[1]" name="station-name[1]" placeholder="駅名（例：渋谷）" value=@inputForm("station-name[1]").value>
 								</div>
 						}else{
 							@for(idx <- inputForm("station-name").indexes){
