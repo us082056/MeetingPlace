@@ -3,16 +3,18 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-	@commonHead()
+	<title>検索結果</title>
+	<meta name="robots" content="noindex,follow">
+	@commonHeadElement()
 </head>
 <body>
 	<div class="well well-sm">
 		<h1>集合駅検索</h1>
 		@if(candidateSeq.isEmpty){
 			<div class="alert alert-danger">
-				中間地点付近に駅がありません。
+				中間地点付近に駅がありませんでした。
 			</div>
-			<input type="button" onclick="location.href='/index'"value="検索画面へ戻る" class="btn btn-primary">
+			<input type="button" onclick="location.href='/index'"value="入力画面へ戻る" class="btn btn-primary">
 		}else{
 			<div class="alert alert-info">
 				以下の集合駅候補が見つかりました。
@@ -44,7 +46,7 @@
 							</td>
 						</tr>
 					</table>
-					<input type="button" onclick="location.href='/index'"value="検索画面へ戻る" class="btn btn-primary">
+					<input type="button" onclick="location.href='/index'"value="入力画面へ戻る" class="btn btn-primary">
 				</div>
 			</div>
 		}

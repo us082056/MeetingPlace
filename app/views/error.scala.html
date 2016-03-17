@@ -3,7 +3,9 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-	@commonHead()
+	<title>エラー</title>
+	<meta name="robots" content="noindex,follow">
+	@commonHeadElement()
 </head>
 <body>
 	<div class="well well-sm">
@@ -11,7 +13,7 @@
 		<div class="alert alert-danger">
 			@message
 		</div>
-		<input type="button" onclick="location.href='/index'"value="検索画面へ戻る" class="btn btn-primary">
+		<input type="button" onclick="location.href='/index'"value="入力画面へ戻る" class="btn btn-primary">
 	</div>
 </body>
 </html>
