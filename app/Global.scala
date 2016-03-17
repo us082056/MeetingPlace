@@ -17,7 +17,7 @@ object Global extends GlobalSettings {
   override def onError(request: RequestHeader, ex: Throwable) = {
     MPLogger.error(this, "システムエラー", ex)
     Future.successful(InternalServerError(
-      views.html.error("予期せぬエラーが発生しました。")))
+      views.html.error("予期せぬエラーが発生しました。入力画面からやり直してください。")))
   }
 
   override def onHandlerNotFound(request: RequestHeader) = {
