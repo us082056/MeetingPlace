@@ -13,9 +13,8 @@ import models.CandidateStation
 import util.MPLogger
 
 /*
- * 駅情報関係の情報やり取りを管理するクラス
+ * 駅情報を扱う
  * TODO startsWithの"("をどうにかする
- * TODO 扱うデータ範囲の思想がぶれてる
  */
 object StationsManager {
 

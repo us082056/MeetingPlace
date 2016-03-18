@@ -8,7 +8,7 @@ $(function(){
        // 初期表示時の削除ボタンの活性状態を決定
        updateDelButtonState()
 
-              // 入力フォームを動的に追加する【TODO】微調整
+              // 入力フォームを動的に追加する
               $('#add-button').click(function(){
                      addedFormCount++
                      
@@ -29,7 +29,6 @@ $(function(){
 
                      var formIdx = defaultFormIdx + addedFormCount
                      
-                            // 削除ボタンの活性非活性で制御しているため、addedFormIdxのチェックは行Count
                             $('#station' + formIdx).remove();
                             addedFormCount--
                             updateDelButtonState()
