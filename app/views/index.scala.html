@@ -12,7 +12,7 @@
 	<div class="well well-sm">
 		<h1>集合駅検索</h1>
 		<p>
-			入力した出発駅それぞれから中間地点にある駅を検索します。
+			出発駅それぞれから中間地点にある駅を検索します。
 		</p>
 		@if(!messageList.isEmpty){
 			<div class="alert alert-danger">
@@ -26,7 +26,7 @@
 			<div class="panel-body">
 				<p class="btn-group" role="group">
 					<button type="button" class="btn btn-info" id="add-button">出発駅追加</button>
-					<button type="button" class="btn btn-inverse" id="del-button" disabled="true">出発駅削除</button>
+					<button type="button" class="btn btn-default" id="del-button" disabled="true">出発駅削除</button>
 				</p>
 				<form action="/inspection" method="get">
 					<div id="input-group">
