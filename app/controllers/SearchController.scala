@@ -93,4 +93,9 @@ class SearchController extends Controller {
     MPLogger.info(this, "結果（検索結果：" + candidateSeq.mkString(", "))
     Ok(views.html.result(candidateSeq, stationList))
   }
+
+  def info = Action {
+    val emptyForm = inputForm.fill(InputForm(Nil))
+    Ok(views.html.info())
+  }
 }

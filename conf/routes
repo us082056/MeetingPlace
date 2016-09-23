@@ -5,6 +5,7 @@ GET		/					controllers.Default.redirect(to = "/index")
 GET		/index				controllers.SearchController.index
 GET		/inspection			controllers.SearchController.inspection
 GET		/search				controllers.SearchController.search
+GET		/info				controllers.SearchController.info
 
 # Map static resources from the /public folder to the /assets URL path
 GET		/assets/*file		controllers.Assets.at(path="/public", file)

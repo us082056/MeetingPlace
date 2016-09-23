@@ -32,7 +32,7 @@ object StationsManager {
     reader = CSVReader.open(new File(".//resources//stations.csv"))
     reader.allWithHeaders().foreach { f =>
       val key = f("station_name") + "(" + prefsMap(f("pref_cd")) + ")"
-      val value = f("station_cd")
+      val value = f("station_g_cd")
       stationsMap.update(key, value)
     }
   }
