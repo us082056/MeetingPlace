@@ -36,7 +36,7 @@ class SearchController extends Controller {
 
         // バリデーションOK
         form => {
-          val filteredNameList = form.names.filter { name => (name != "") }
+          val filteredNameList = form.names.filter { name => (name != "") }.map { name => name.stripSuffix("駅") }
 
           // 相関チェック（入力項目数チェック）
           if (filteredNameList.size < 2) {
